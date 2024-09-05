@@ -34,20 +34,7 @@ class Levenberg_Marquardt:
         """
 
         self.f = f
-
-        if grad_f is not None:
-            self.grad_f = grad_f
-        else:
-            def num_grad_f(self, t, beta, alpha = None):
-
-                ht = h*t
-
-                if self.alpha is None:
-                    return (self.f(t + ht, beta) - self.f(t, beta))/ht
-                return (self.f(t + ht, beta, alpha) - self.f(t, beta, alpha))/ht
-            
-            self.grad_f = num_grad_f
-
+        self.grad_f = grad_f if grad_f is not None else self.set_num_grad_g(f, h)
         self.t = np.array([t]).T
         self.y = np.array([y]).T
         self.alpha = alpha
@@ -158,3 +145,18 @@ class Levenberg_Marquardt:
 
         return np.abs(chi_square - previous_chi_square) < self.e*chi_square or i > self.i
 
+    def set_num_grad_g(self, f, h = np.sqrt(np.finfo(float).eps)):
+        """
+        Set the numerical gradient function.
+
+        :param f: the function to be valued.
+        :type f: function.
+        :param h: the step to calculate the numerical gradient.
+        :type h: float.
+        :return: the numerical gradient function.
+        :rtype: function.
+        """
+
+        grad_f = lambda t, beta, alpha = None: (f(t*(1 + h), beta, alpha) - f(t, beta, alpha))/(t*h)
+
+        return grad_f
