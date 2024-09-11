@@ -130,6 +130,7 @@ class Levenberg_Marquardt:
         """
 
         self.beta, self.chi_square = self.minimization( )
+        self.set_C( )
 
         return self.beta
 
