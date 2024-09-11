@@ -37,7 +37,7 @@ class Levenberg_Marquardt:
         self.grad_f = grad_f if grad_f is not None else self.set_num_grad_g(f, h)
         self.t = np.array([t]).T
         self.y = np.array([y]).T
-        self.alpha = alpha
+        self.alpha = np.array(alpha) if alpha is not None else None 
         self.psi = psi
         self.chi_square = 0
         self.C = None
@@ -46,9 +46,6 @@ class Levenberg_Marquardt:
         self.e = e
         self.i = i
         self.beta = np.array(beta)
-
-        if self.alpha is not None:
-            self.alpha = np.array(self.alpha)
 
         if Var is None:
             self.W = np.identity(self.m)
@@ -65,8 +62,6 @@ class Levenberg_Marquardt:
 
         if beta is None:
             beta = self.beta
-        if self.alpha is None:
-            return np.array([[self.f(self.t[i, 0], beta) for i in range(self.m)]]).T
         return np.array([[self.f(self.t[i, 0], beta, self.alpha) for i in range(self.m)]]).T
     
     def J(self, beta = None):
@@ -79,8 +74,6 @@ class Levenberg_Marquardt:
         
         if beta is None:
             beta = self.beta
-        if self.alpha is None:
-            return np.array([self.grad_f(self.t[i, 0], beta) for i in range(self.m)])
         return np.array([self.grad_f(self.t[i, 0], beta, self.alpha) for i in range(self.m)])
     
     def set_C(self, beta = None):
@@ -130,6 +123,7 @@ class Levenberg_Marquardt:
         """
 
         self.beta, self.chi_square = self.minimization( )
+        self.set_C( )
 
         return self.beta
 
