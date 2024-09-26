@@ -1,4 +1,4 @@
-# Levenber-Marquardt adjustment algorithm
+# Levenberg-Marquardt adjustment algorithm
 
 ### The repository
 
